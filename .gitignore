@@ -1,0 +1,21 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+out/
+
+### Gradle Cache & Build ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+### Java / Spring Boot ###
+/bin/
+/target/
+*.log
+logs/
+
+### OS Files ###
+.DS_Store
+
+src/main/resources/application.properties
