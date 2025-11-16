@@ -1,7 +1,7 @@
-package com.example.bakersbackend.domain.repository;
+package com.example.bakersbackend.domain.auth.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.bakersbackend.domain.entity.User;
+import com.example.bakersbackend.domain.auth.entity.User;
 
 import java.util.Optional;
 
