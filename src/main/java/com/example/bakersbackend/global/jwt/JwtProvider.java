@@ -1,10 +1,7 @@
 package com.example.bakersbackend.global.jwt;
 
 import com.example.bakersbackend.domain.auth.entity.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -56,5 +53,14 @@ public class JwtProvider {
 
     public Long getUserId(String token) {
         return Long.valueOf(parseClaims(token).getPayload().getSubject());
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }
