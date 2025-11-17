@@ -1,5 +1,7 @@
 package com.example.bakersbackend.domain.auth.controller;
 
+import com.example.bakersbackend.domain.auth.dto.SignInRequest;
+import com.example.bakersbackend.domain.auth.dto.SignInResponse;
 import com.example.bakersbackend.domain.auth.dto.SignUpRequest;
 import com.example.bakersbackend.domain.auth.dto.SignUpResponse;
 import com.example.bakersbackend.domain.auth.service.AuthService;
@@ -24,6 +26,14 @@ public class AuthController {
         SignUpResponse res = authService.signUp(req);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(res);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest req) {
+        SignInResponse res = authService.signIn(req);
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(res);
     }
 }
