@@ -2,12 +2,15 @@ package com.example.bakersbackend.domain.crew.controller;
 
 import com.example.bakersbackend.domain.auth.entity.User;
 import com.example.bakersbackend.domain.crew.dto.CrewListResponse;
+import com.example.bakersbackend.domain.crew.dto.CrewSearchResponse;
 import com.example.bakersbackend.domain.crew.dto.CrewSignUpRequest;
 import com.example.bakersbackend.domain.crew.service.CrewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/group")
@@ -32,5 +35,13 @@ public class CrewController {
     ) {
         Long crewId = request.crewId();
         return crewService.signUpGroups(crewId, user.getId());
+    }
+
+    // 검색어 자동완성
+    @GetMapping("/search/keyword")
+    public List<CrewSearchResponse> searchAuto(
+            @RequestParam String keyword
+    ){
+        return crewService.searchKeyword(keyword);
     }
 }
