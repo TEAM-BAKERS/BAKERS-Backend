@@ -42,12 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            if (!jwtProvider.validateToken(token)) {
+            boolean valid = jwtProvider.validateToken(token, JwtType.ACCESS);
+            if (!valid) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            Long userId = jwtProvider.getUserId(token);
+            Long userId = jwtProvider.getUserId(token, JwtType.ACCESS);
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
