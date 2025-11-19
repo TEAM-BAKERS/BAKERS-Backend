@@ -1,17 +1,24 @@
 package com.example.bakersbackend.domain.crew.service;
 
+import com.example.bakersbackend.domain.auth.entity.User;
+import com.example.bakersbackend.domain.auth.repository.UserRepository;
 import com.example.bakersbackend.domain.crew.dto.CrewListData;
 import com.example.bakersbackend.domain.crew.dto.CrewListResponse;
 import com.example.bakersbackend.domain.crew.dto.TagData;
-import com.example.bakersbackend.domain.crew.entity.Crew;
-import com.example.bakersbackend.domain.crew.entity.CrewTag;
-import com.example.bakersbackend.domain.crew.entity.MemberStatus;
+import com.example.bakersbackend.domain.crew.entity.*;
 import com.example.bakersbackend.domain.crew.repository.CrewDistanceProjection;
+import com.example.bakersbackend.domain.crew.repository.CrewMemberRepository;
 import com.example.bakersbackend.domain.crew.repository.CrewRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -20,6 +27,8 @@ import java.util.stream.Collectors;
 public class CrewService {
 
     private final CrewRepository crewRepository;
+    private final CrewMemberRepository crewMemberRepository;
+    private final UserRepository userRepository;
 
     // 그룹 조회
     public CrewListResponse getAllGroups() {
@@ -71,5 +80,72 @@ public class CrewService {
                 .count(groupList.size())
                 .groupList(groupList)
                 .build();
+    }
+
+    // 크루 가입
+    @Transactional
+    public ResponseEntity<?> signUpGroups(Long crewId, Long userId) {
+        // JSON 응답
+        Map<String, Object> response = new HashMap<>();
+
+        // 1. 크루 존재 여부 체크
+        Optional<Crew> crewOptional = crewRepository.findById(crewId);
+        if (crewOptional.isEmpty()) {
+            response.put("success", false);
+            response.put("message", "존재하지 않는 크루입니다.");
+            response.put("crewId", crewId);
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(response);
+        }
+        Crew crew = crewOptional.get();
+
+        // 2. 유저 존재 여부 체크
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            response.put("success", false);
+            response.put("message", "존재하지 않는 유저입니다.");
+            response.put("userId", userId);
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(response);
+        }
+        User user = userOptional.get();
+
+        // 3. 이미 가입됐는지 체크
+        boolean joined = crewMemberRepository
+                .existsByUserIdAndStatus(userId, MemberStatus.APPROVED);
+
+        if (joined) {
+            response.put("success", false);
+            response.put("message", "이미 크루에 가입되어 있습니다.");
+            response.put("crewId", crewId);
+
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(response);
+        }
+
+        // 4. crew_member INSERT
+        CrewMember crewMember = CrewMember.builder()
+                .crew(crew)
+                .user(user)
+                .role(MemberRole.MEMBER)
+                .status(MemberStatus.APPROVED)
+                .build();
+        crewMemberRepository.save(crewMember);
+
+        // 5. users.current_crew_id 업데이트
+        user.setCurrentGroupId(crew.getId());
+        userRepository.save(user);
+
+        // 6. 성공 응답
+        response.put("success", true);
+        response.put("message", "크루 가입 완료!");
+        response.put("crewId", crewId);
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -4,7 +4,7 @@ import com.example.bakersbackend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
