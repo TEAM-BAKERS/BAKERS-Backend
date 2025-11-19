@@ -38,10 +38,10 @@ public class CrewController {
     }
 
     // 검색어 자동완성
-    @GetMapping("/search/keyword")
+    @GetMapping("/autocomplete")
     public List<CrewSearchResponse> searchAuto(
             @RequestParam String keyword
     ){
-        return crewService.searchKeyword(keyword);
+        return crewService.autocomplete(keyword);
     }
 }

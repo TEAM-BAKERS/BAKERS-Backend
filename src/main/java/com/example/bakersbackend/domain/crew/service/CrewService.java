@@ -151,7 +151,7 @@ public class CrewService {
     }
 
     // 검색어 자동완성
-    public List<CrewSearchResponse> searchKeyword(String keyword) {
+    public List<CrewSearchResponse> autocomplete(String keyword) {
 
         // 빈 문자열 들어오면 바로 빈 리스트 반환
         if (keyword == null || keyword.isBlank()) {
