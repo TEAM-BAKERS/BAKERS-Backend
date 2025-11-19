@@ -53,20 +53,33 @@ public class JwtProvider {
                 .compact();
     }
 
-    public Jws<Claims> parseClaims(String token) {
-        return Jwts.parser()
+
+
+    public Jws<Claims> parseClaims(String token, JwtType type) {
+        Jws<Claims> jws = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token);
+
+        Claims claims = jws.getPayload();
+        String actualType = claims.get("tokenType", String.class);
+
+        if (!type.name().equals(actualType)) {
+            throw new IllegalArgumentException("잘못된 토큰 타입입니다. 기대 토큰 타입 =" + type + ", 실제 토큰=" + actualType);
+        }
+
+        return jws;
     }
 
-    public Long getUserId(String token) {
-        return Long.valueOf(parseClaims(token).getPayload().getSubject());
+
+    public Long getUserId(String token, JwtType type) {
+        Jws<Claims> jws = parseClaims(token, type);
+        return Long.valueOf(jws.getPayload().getSubject());
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, JwtType type) {
         try {
-            parseClaims(token);
+            parseClaims(token, type);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;

@@ -1,9 +1,6 @@
 package com.example.bakersbackend.domain.auth.controller;
 
-import com.example.bakersbackend.domain.auth.dto.SignInRequest;
-import com.example.bakersbackend.domain.auth.dto.SignInResponse;
-import com.example.bakersbackend.domain.auth.dto.SignUpRequest;
-import com.example.bakersbackend.domain.auth.dto.SignUpResponse;
+import com.example.bakersbackend.domain.auth.dto.*;
 import com.example.bakersbackend.domain.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +29,14 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest req) {
         SignInResponse res = authService.signIn(req);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(res);
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<SignInResponse> refreshAccessToken(@Valid @RequestBody RefreshTokenRequest req) {
+        SignInResponse res = authService.reissueAccessToken(req);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(res);

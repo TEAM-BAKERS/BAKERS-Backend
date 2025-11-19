@@ -1,12 +1,11 @@
 package com.example.bakersbackend.domain.auth.service;
 
-import com.example.bakersbackend.domain.auth.dto.SignInRequest;
-import com.example.bakersbackend.domain.auth.dto.SignInResponse;
-import com.example.bakersbackend.domain.auth.dto.SignUpRequest;
-import com.example.bakersbackend.domain.auth.dto.SignUpResponse;
+import com.example.bakersbackend.domain.auth.dto.*;
 import com.example.bakersbackend.domain.auth.entity.User;
 import com.example.bakersbackend.domain.auth.repository.UserRepository;
+import com.example.bakersbackend.global.jwt.JwtProperties;
 import com.example.bakersbackend.global.jwt.JwtProvider;
+import com.example.bakersbackend.global.jwt.JwtType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final JwtProperties jwtProperties;
 
     public SignUpResponse signUp(SignUpRequest req) {
         // 사용 중인 이메일이 있다면
@@ -59,5 +59,40 @@ public class AuthService {
         user.changeRefreshToken(refreshToken);
 
         return new SignInResponse(accessToken, refreshToken, "Bearer", 1800);
+    }
+
+    public SignInResponse reissueAccessToken(@Valid RefreshTokenRequest req) {
+
+        String refreshToken = req.refreshToken();
+
+        if (!jwtProvider.validateToken(refreshToken, JwtType.REFRESH)) {
+            throw new IllegalArgumentException("유효하지 않은 Refresh Token입니다.");
+        }
+
+        Long userId = jwtProvider.getUserId(refreshToken, JwtType.REFRESH);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+
+        // DB에 저장된 RefreshToken과 비교해서 틀리면 예외발생
+        String savedRefreshToken = user.getRefreshToken();
+        if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+            throw new IllegalArgumentException("이미 만료되었거나 폐기된 리프레시 토큰입니다.");
+        }
+
+        String newAccessToken = jwtProvider.generateAccessToken(user);
+        String newRefreshToken = jwtProvider.generateRefreshToken(user);
+
+        user.changeRefreshToken(newRefreshToken);
+
+        long expiresIn = jwtProperties.getAccessTokenValiditySeconds();
+
+        return new SignInResponse(
+                newAccessToken,
+                newRefreshToken,
+                "Bearer",
+                expiresIn
+        );
     }
 }
