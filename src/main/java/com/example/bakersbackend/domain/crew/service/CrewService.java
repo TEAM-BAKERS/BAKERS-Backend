@@ -4,6 +4,7 @@ import com.example.bakersbackend.domain.auth.entity.User;
 import com.example.bakersbackend.domain.auth.repository.UserRepository;
 import com.example.bakersbackend.domain.crew.dto.CrewListData;
 import com.example.bakersbackend.domain.crew.dto.CrewListResponse;
+import com.example.bakersbackend.domain.crew.dto.CrewSearchResponse;
 import com.example.bakersbackend.domain.crew.dto.TagData;
 import com.example.bakersbackend.domain.crew.entity.*;
 import com.example.bakersbackend.domain.crew.repository.CrewDistanceProjection;
@@ -147,5 +148,20 @@ public class CrewService {
         response.put("crewId", crewId);
 
         return ResponseEntity.ok(response);
+    }
+
+    // 검색어 자동완성
+    public List<CrewSearchResponse> searchKeyword(String keyword) {
+
+        // 빈 문자열 들어오면 바로 빈 리스트 반환
+        if (keyword == null || keyword.isBlank()) {
+            return List.of();
+        }
+
+        return crewRepository
+                .findTop10ByNameStartingWithIgnoreCaseOrderByNameAsc(keyword)
+                .stream()
+                .map(CrewSearchResponse::from)
+                .toList();
     }
 }

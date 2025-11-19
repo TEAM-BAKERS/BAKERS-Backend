@@ -21,4 +21,7 @@ public interface CrewRepository extends JpaRepository<Crew, Long> {
             nativeQuery = true
     )
     List<CrewDistanceProjection> findCrewTotalDistances();
+
+    // name LIKE 'keyword%' (대소문자 무시, 상위 10개)
+    List<Crew> findTop10ByNameStartingWithIgnoreCaseOrderByNameAsc(String name);
 }
