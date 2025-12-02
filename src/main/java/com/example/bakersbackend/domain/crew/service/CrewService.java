@@ -2,10 +2,7 @@ package com.example.bakersbackend.domain.crew.service;
 
 import com.example.bakersbackend.domain.auth.entity.User;
 import com.example.bakersbackend.domain.auth.repository.UserRepository;
-import com.example.bakersbackend.domain.crew.dto.CrewListData;
-import com.example.bakersbackend.domain.crew.dto.CrewListResponse;
-import com.example.bakersbackend.domain.crew.dto.CrewSearchResponse;
-import com.example.bakersbackend.domain.crew.dto.TagData;
+import com.example.bakersbackend.domain.crew.dto.*;
 import com.example.bakersbackend.domain.crew.entity.*;
 import com.example.bakersbackend.domain.crew.repository.CrewDistanceProjection;
 import com.example.bakersbackend.domain.crew.repository.CrewMemberRepository;
@@ -16,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,5 +161,50 @@ public class CrewService {
                 .stream()
                 .map(CrewSearchResponse::from)
                 .toList();
+    }
+
+    // 크루 생성
+    public Map<String, Object> saveCrew(Long userId, CrewCreateRequest req) throws IOException {
+        // JSON 응답
+        Map<String, Object> response = new HashMap<>();
+
+        // 1. 해당 유저가 이미 승인된 크루에 가입되어 있는지 검증
+        boolean exists = crewMemberRepository.existsByUserIdAndStatus(userId, MemberStatus.APPROVED);
+        if (exists) {
+            response.put("success", false);
+            response.put("message", "이미 크루에 가입되어 있습니다.");
+            return response;
+        }
+
+        // 2. 유저 조회 (없으면 예외)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. userId=" + userId));
+
+        // 3. 크루 생성 및 매핑
+        Crew crew = Crew.builder()
+                .name(req.name())
+                .intro(req.intro())
+                .max(req.max())
+                .owner(user)
+                .build();
+
+        crewRepository.save(crew);
+
+        // 4. 크루 멤버(오너 본인) 같이 등록하기 (원하면)
+        CrewMember crewMember = CrewMember.builder()
+                .crew(crew)
+                .user(user)
+                .status(MemberStatus.APPROVED)   // 기본값: 승인
+                .role(MemberRole.LEADER)
+                .build();
+
+        crewMemberRepository.save(crewMember);
+
+        // 5. 응답 데이터 구성
+        response.put("success", true);
+        response.put("message", "크루가 생성되었습니다.");
+        response.put("crewId", crew.getId());
+
+        return response;
     }
 }

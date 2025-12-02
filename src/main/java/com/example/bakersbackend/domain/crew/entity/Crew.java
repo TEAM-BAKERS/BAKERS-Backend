@@ -32,7 +32,7 @@ public class Crew extends BaseEntity {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 5, nullable = false)
     private String name;
 
     @Column(columnDefinition = "text")
