@@ -18,4 +18,5 @@ logs/
 ### OS Files ###
 .DS_Store
 
-src/main/resources/application.properties
+src/main/resources/application-local.properties
+src/main/resources/application-prod.properties
