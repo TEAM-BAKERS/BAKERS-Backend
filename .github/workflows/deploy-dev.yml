@@ -42,9 +42,9 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          JAR_FILE=$(ls build/libs/*.jar | head -n 1)
-          echo "JAR_FILE=${JAR_FILE}"
-          scp -i ~/.ssh/bakers-ci-key -o StrictHostKeyChecking=no "$JAR_FILE" ${EC2_USER}@${EC2_HOST}:~/bakers-deploy.jar
+          JAR_FILE=$(ls build/libs/*SNAPSHOT.jar | grep -v plain | head -n 1)
+          echo "JAR_FILE=$JAR_FILE"
+          scp -o StrictHostKeyChecking=no -i ./bakers-ci-key "$JAR_FILE" ubuntu@${{ secrets.EC2_HOST }}:/opt/app/
 
       # 7) EC2에서 JAR 교체 + 서비스 재시작
       - name: Deploy on EC2
