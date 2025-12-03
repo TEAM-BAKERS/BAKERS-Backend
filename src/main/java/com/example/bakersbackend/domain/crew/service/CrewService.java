@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -329,5 +330,27 @@ public class CrewService {
         );
 
         return new CrewHomeResponse(true, crewSummaryData);
+    }
+
+
+    // 크루 멤버 달린 기록
+    public List<CrewMemberRunningSatatsResponse> getCrewMemberStats(Long crewId) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // 이번 주 월요일 00:00
+        LocalDate today = now.toLocalDate();
+        LocalDate weekStartDate = today.with(DayOfWeek.MONDAY);
+        LocalDateTime weekStart = weekStartDate.atStartOfDay();
+
+        // 이번 달 1일 00:00
+        LocalDate monthStartDate = today.withDayOfMonth(1);
+        LocalDateTime monthStart = monthStartDate.atStartOfDay();
+
+        return crewMemberRepository.findCrewMemberRunningStats(
+                crewId,
+                weekStart,
+                monthStart,
+                now
+        );
     }
 }
