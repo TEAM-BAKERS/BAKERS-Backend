@@ -32,4 +32,22 @@ public interface RunningRepository extends JpaRepository<Running, Long> {
     List<User> findTodayRunners(@Param("crewId") Long crewId,
                                 @Param("start") LocalDateTime start,
                                 @Param("end") LocalDateTime end);
+
+    // 유저별 총 거리 (m 합계)
+    @Query("select coalesce(sum(r.distance), 0) " +
+            "from Running r " +
+            "where r.user.id = :userId")
+    Long sumDistanceByUserId(@Param("userId") Long userId);
+
+    // 유저별 총 시간 (sec 합계)
+    @Query("select coalesce(sum(r.duration), 0) " +
+            "from Running r " +
+            "where r.user.id = :userId")
+    Long sumDurationByUserId(@Param("userId") Long userId);
+
+    // 유저별 러닝 수
+    @Query("select count(r) " +
+            "from Running r " +
+            "where r.user.id = :userId")
+    Long countByUserId(@Param("userId") Long userId);
 }
