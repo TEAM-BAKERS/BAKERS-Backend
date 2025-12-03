@@ -63,4 +63,15 @@ public class CrewController {
         // @AuthenticationPrincipal 에서 바로 도메인 User 를 쓰고 있다고 가정
         return crewService.getMyCrew(user.getId());
     }
+
+    // 크루원 달린 기록
+    @GetMapping("/{crewId}/members/stats")
+    public ResponseEntity<List<CrewMemberRunningSatatsResponse>> getCrewMemberStats(
+            @PathVariable Long crewId
+    ) {
+        List<CrewMemberRunningSatatsResponse> result =
+                crewService.getCrewMemberStats(crewId);
+
+        return ResponseEntity.ok(result);
+    }
 }
