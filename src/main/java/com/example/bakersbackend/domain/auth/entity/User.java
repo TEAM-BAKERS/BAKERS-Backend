@@ -27,6 +27,7 @@ public class User extends BaseEntity {
 
     private Long currentGroupId;
 
+    private String imageUrl;
     private String refreshToken;
 
     // 편의 메서드
