@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,16 @@ public interface CrewChallengeRepository extends JpaRepository<CrewChallenge, Lo
      * 크루의 모든 챌린지를 최신순으로 조회합니다.
      */
     List<CrewChallenge> findByCrewOrderByCreatedAtDesc(Crew crew);
+
+    // 지금 시점에 활성화된 챌린지 (start <= now <= end)
+    @Query("""
+           select c
+           from CrewChallenge c
+           where c.crew.id = :crewId
+             and c.startAt <= :now
+             and c.endAt >= :now
+           order by c.startAt desc
+           """)
+    List<CrewChallenge> findActiveChallenges(@Param("crewId") Long crewId,
+                                             @Param("now") LocalDateTime now);
 }

@@ -41,6 +41,10 @@ public class CrewChallengeProgress extends BaseEntity {
     @Column(name = "contributed_distance", nullable = false)
     private Integer contributedDistance;
 
+    // 평균 심박수
+    @Column(name = "avg_heartrate", nullable = false)
+    private Integer avgHeartrate;
+
     // 비즈니스 메서드: 기여 거리 추가
     public void addDistance(Integer distance) {
         if (distance == null || distance <= 0) {

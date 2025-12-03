@@ -1,10 +1,7 @@
 package com.example.bakersbackend.domain.crew.controller;
 
 import com.example.bakersbackend.domain.auth.entity.User;
-import com.example.bakersbackend.domain.crew.dto.CrewCreateRequest;
-import com.example.bakersbackend.domain.crew.dto.CrewListResponse;
-import com.example.bakersbackend.domain.crew.dto.CrewSearchResponse;
-import com.example.bakersbackend.domain.crew.dto.CrewSignUpRequest;
+import com.example.bakersbackend.domain.crew.dto.*;
 import com.example.bakersbackend.domain.crew.service.CrewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +55,12 @@ public class CrewController {
 
         Map<String, Object> result = crewService.saveCrew(user.getId(), request);
         return ResponseEntity.ok(result);
+    }
+
+    // 크루 첫 화면
+    @GetMapping("")
+    public CrewHomeResponse getMyCrew(@AuthenticationPrincipal User user) {
+        // @AuthenticationPrincipal 에서 바로 도메인 User 를 쓰고 있다고 가정
+        return crewService.getMyCrew(user.getId());
     }
 }

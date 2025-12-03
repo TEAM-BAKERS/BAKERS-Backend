@@ -29,4 +29,12 @@ public interface CrewChallengeProgressRepository extends JpaRepository<CrewChall
      */
     @Query("SELECT ccp FROM CrewChallengeProgress ccp WHERE ccp.challenge = :challenge AND ccp.user = :user")
     Optional<CrewChallengeProgress> findByChallengeAndUserWithoutLock(@Param("challenge") CrewChallenge challenge, @Param("user") User user);
+
+    // 거리 기반 챌린지라 가정하고 contributedDistance 합산
+    @Query("""
+           select coalesce(sum(p.contributedDistance), 0)
+           from CrewChallengeProgress p
+           where p.challenge.id = :challengeId
+           """)
+    Integer sumContributedDistance(@Param("challengeId") Long challengeId);
 }

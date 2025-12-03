@@ -11,4 +11,7 @@ public interface CrewMemberRepository extends JpaRepository<CrewMember, Long> {
 
     // 1인 1크루(이미 다른 크루에 APPROVED 되어 있는지 확인하고 싶으면)
     boolean existsByUserIdAndStatus(Long userId, MemberStatus status);
+
+    // 크루 가입 인원
+    int countByCrewIdAndStatus(Long crewId, MemberStatus status);
 }

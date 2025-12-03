@@ -38,6 +38,12 @@ public class CrewChallenge extends BaseEntity {
     @Column(name = "goal_distance", nullable = false)
     private Integer goalDistance;
 
+    @Column(name = "type", nullable = true)
+    private ChallengeType type;
+
+    @Column(name = "goal_value")
+    private Integer goalValue;
+
     // 크루 전체가 달성한 누적 거리 (미터 단위)
     @Column(name = "current_accumulated_distance", nullable = false)
     private Integer currentAccumulatedDistance;
