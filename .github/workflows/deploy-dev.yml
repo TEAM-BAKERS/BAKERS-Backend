@@ -1,0 +1,63 @@
+name: Deploy to EC2 (dev)
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 코드 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2) JDK 설정
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ secrets.JAVA_VERSION }}
+
+      # 3) Gradle 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 4) 빌드 (테스트는 생략)
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      # 5) EC2 접속용 SSH 키 생성
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/bakers-ci-key
+          chmod 600 ~/.ssh/bakers-ci-key
+
+      # 6) JAR 파일을 EC2로 전송
+      - name: Copy JAR to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          JAR_FILE=$(ls build/libs/*SNAPSHOT.jar | grep -v plain | head -n 1)
+          echo "JAR_FILE=$JAR_FILE"
+          scp -i ~/.ssh/bakers-ci-key -o StrictHostKeyChecking=no "$JAR_FILE" ${EC2_USER}@${EC2_HOST}:~/bakers-deploy.jar
+
+
+      - name: Deploy on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_APP_DIR: ${{ secrets.EC2_APP_DIR }}
+          EC2_SERVICE_NAME: ${{ secrets.EC2_SERVICE_NAME }}
+        run: |
+          ssh -i ~/.ssh/bakers-ci-key -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
+            set -e
+            sudo mv ~/bakers-deploy.jar ${EC2_APP_DIR}/BAKERS-Backend-0.0.1-SNAPSHOT.jar
+            sudo chown appuser:appuser ${EC2_APP_DIR}/BAKERS-Backend-0.0.1-SNAPSHOT.jar
+            sudo systemctl daemon-reload
+            sudo systemctl restart ${EC2_SERVICE_NAME}
+          "

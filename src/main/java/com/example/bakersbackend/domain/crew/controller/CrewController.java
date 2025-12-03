@@ -1,19 +1,20 @@
 package com.example.bakersbackend.domain.crew.controller;
 
 import com.example.bakersbackend.domain.auth.entity.User;
-import com.example.bakersbackend.domain.crew.dto.CrewListResponse;
-import com.example.bakersbackend.domain.crew.dto.CrewSearchResponse;
-import com.example.bakersbackend.domain.crew.dto.CrewSignUpRequest;
+import com.example.bakersbackend.domain.crew.dto.*;
 import com.example.bakersbackend.domain.crew.service.CrewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/group")
+@RequestMapping("/api/crew")
 @RequiredArgsConstructor
 public class CrewController {
 
@@ -43,5 +44,34 @@ public class CrewController {
             @RequestParam String keyword
     ){
         return crewService.autocomplete(keyword);
+    }
+
+    // 크루 생성
+    @PostMapping("")
+    public ResponseEntity<Map<String, Object>> create(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody CrewCreateRequest request
+    ) throws IOException {
+
+        Map<String, Object> result = crewService.saveCrew(user.getId(), request);
+        return ResponseEntity.ok(result);
+    }
+
+    // 크루 첫 화면
+    @GetMapping("")
+    public CrewHomeResponse getMyCrew(@AuthenticationPrincipal User user) {
+        // @AuthenticationPrincipal 에서 바로 도메인 User 를 쓰고 있다고 가정
+        return crewService.getMyCrew(user.getId());
+    }
+
+    // 크루원 달린 기록
+    @GetMapping("/{crewId}/members/stats")
+    public ResponseEntity<List<CrewMemberRunningSatatsResponse>> getCrewMemberStats(
+            @PathVariable Long crewId
+    ) {
+        List<CrewMemberRunningSatatsResponse> result =
+                crewService.getCrewMemberStats(crewId);
+
+        return ResponseEntity.ok(result);
     }
 }
