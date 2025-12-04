@@ -9,7 +9,7 @@ public record ChallengeResponse(
         Long challengeId,
         String title,
         String description,
-        Integer goalDistance,
+        Integer goalValue,
         Integer currentAccumulatedDistance,
         ChallengeStatus status,
         Double progressPercentage,
@@ -17,15 +17,15 @@ public record ChallengeResponse(
         LocalDateTime endAt
 ) {
     public static ChallengeResponse from(CrewChallenge challenge) {
-        double progressPercentage = challenge.getGoalDistance() > 0
-                ? (double) challenge.getCurrentAccumulatedDistance() / challenge.getGoalDistance() * 100
+        double progressPercentage = challenge.getGoalValue() > 0
+                ? (double) challenge.getCurrentAccumulatedDistance() / challenge.getGoalValue() * 100
                 : 0.0;
 
         return new ChallengeResponse(
                 challenge.getId(),
                 challenge.getTitle(),
                 challenge.getDescription(),
-                challenge.getGoalDistance(),
+                challenge.getGoalValue(),
                 challenge.getCurrentAccumulatedDistance(),
                 challenge.getStatus(),
                 Math.min(progressPercentage, 100.0),

@@ -13,9 +13,9 @@ public record CreateChallengeRequest(
 
         String description,
 
-        @NotNull(message = "목표 거리는 필수입니다.")
-        @Min(value = 1000, message = "목표 거리는 최소 1km(1000m) 이상이어야 합니다.")
-        Integer goalDistance,
+        @NotNull(message = "목표 값은 필수입니다.")
+        @Min(value = 1000, message = "목표 값은 최소 1000 이상이어야 합니다.")
+        Integer goalValue,
 
         @NotNull(message = "종료 날짜는 필수입니다.")
         @Future(message = "종료 날짜는 미래여야 합니다.")

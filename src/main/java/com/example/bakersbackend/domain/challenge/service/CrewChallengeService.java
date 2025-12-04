@@ -56,7 +56,7 @@ public class CrewChallengeService {
             log.info("🎉 축하합니다! 크루 {} 챌린지 '{}'가 목표를 달성했습니다! (목표: {}m, 달성: {}m)",
                     crew.getId(),
                     challenge.getTitle(),
-                    challenge.getGoalDistance(),
+                    challenge.getGoalValue(),
                     challenge.getCurrentAccumulatedDistance());
         }
     }
@@ -98,14 +98,14 @@ public class CrewChallengeService {
      * 크루 챌린지를 생성합니다.
      */
     @Transactional
-    public CrewChallenge createChallenge(Crew crew, String title, String description, Integer goalDistance, LocalDateTime endDate) {
+    public CrewChallenge createChallenge(Crew crew, String title, String description, Integer goalValue, LocalDateTime endDate) {
         LocalDateTime now = LocalDateTime.now(clock);
 
         CrewChallenge challenge = CrewChallenge.builder()
                 .crew(crew)
                 .title(title)
                 .description(description)
-                .goalDistance(goalDistance)
+                .goalValue(goalValue)
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
                 .startAt(now)
@@ -114,7 +114,7 @@ public class CrewChallengeService {
 
         CrewChallenge savedChallenge = crewChallengeRepository.save(challenge);
         log.info("크루 {} 챌린지 생성: '{}'(목표: {}m, 종료일: {})",
-                crew.getId(), title, goalDistance, endDate);
+                crew.getId(), title, goalValue, endDate);
 
         return savedChallenge;
     }

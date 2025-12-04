@@ -2,6 +2,7 @@ package com.example.bakersbackend.domain.match.controller;
 
 import com.example.bakersbackend.domain.auth.entity.User;
 import com.example.bakersbackend.domain.match.dto.LeaderboardEntry;
+import com.example.bakersbackend.domain.match.dto.MatchDetailResponse;
 import com.example.bakersbackend.domain.match.dto.MatchResponse;
 import com.example.bakersbackend.domain.match.dto.OngoingMatchResponse;
 import com.example.bakersbackend.domain.match.entity.CrewMatch;
@@ -53,5 +54,16 @@ public class MatchController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/ongoing/detail")
+    public ResponseEntity<MatchDetailResponse> getOngoingMatchDetail(
+            @AuthenticationPrincipal User user
+    ) {
+        Optional<MatchDetailResponse> responseOpt = crewMatchService.getOngoingMatchDetail(user);
+
+        return responseOpt
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 }
