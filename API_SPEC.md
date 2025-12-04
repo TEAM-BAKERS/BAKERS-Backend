@@ -3,11 +3,12 @@
 ## 목차
 1. [인증 API](#1-인증-api)
 2. [사용자 API](#2-사용자-api)
-3. [크루 API](#3-크루-api)
-4. [러닝 기록 API](#4-러닝-기록-api)
-5. [챌린지 API](#5-챌린지-api)
-6. [배틀 리그 API](#6-배틀-리그-api)
-7. [마이페이지 API](#7-마이페이지-api)
+3. [홈 화면 API](#3-홈-화면-api)
+4. [크루 API](#4-크루-api)
+5. [러닝 기록 API](#5-러닝-기록-api)
+6. [챌린지 API](#6-챌린지-api)
+7. [배틀 리그 API](#7-배틀-리그-api)
+8. [마이페이지 API](#8-마이페이지-api)
 
 ---
 
@@ -119,9 +120,86 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 3. 크루 API
+## 3. 홈 화면 API
 
-### 3.1 크루 목록 조회
+### 3.1 홈 화면 조회
+```
+GET /api/v1/home
+```
+
+**Headers**
+```
+Authorization: Bearer {accessToken}
+```
+
+**Response** `200 OK`
+```json
+{
+  "battleLeague": {
+    "myCrewName": "아침 러너스",
+    "opponentCrewName": "저녁 산책",
+    "myCrewDistance": 250000,
+    "opponentCrewDistance": 180000
+  },
+  "todayRunning": {
+    "distance": 5000,
+    "duration": 1800,
+    "pace": 360
+  },
+  "recentActivities": [
+    {
+      "nickname": "홍길동",
+      "distance": 5000,
+      "duration": 1800,
+      "pace": 360
+    },
+    {
+      "nickname": "김철수",
+      "distance": 3000,
+      "duration": 1200,
+      "pace": 400
+    },
+    {
+      "nickname": "이영희",
+      "distance": 7000,
+      "duration": 2400,
+      "pace": 343
+    },
+    {
+      "nickname": "박민수",
+      "distance": 4000,
+      "duration": 1600,
+      "pace": 400
+    },
+    {
+      "nickname": "정수진",
+      "distance": 6000,
+      "duration": 2100,
+      "pace": 350
+    }
+  ]
+}
+```
+
+**데이터가 없는 경우** `200 OK`
+```json
+{
+  "battleLeague": null,
+  "todayRunning": null,
+  "recentActivities": []
+}
+```
+
+**설명**
+- `battleLeague`: 진행 중인 배틀 리그가 없거나 내 크루가 참가하지 않은 경우 `null`
+- `todayRunning`: 오늘 러닝 기록이 없는 경우 `null` (가장 최근 1개만 반환)
+- `recentActivities`: 크루의 최근 러닝 기록 최대 5개 (없으면 빈 배열)
+
+---
+
+## 4. 크루 API
+
+### 4.1 크루 목록 조회
 ```
 GET /api/crew/list
 ```
@@ -157,7 +235,7 @@ Authorization: Bearer {accessToken}
 
 ---
 
-### 3.2 크루 검색 자동완성
+### 4.2 크루 검색 자동완성
 ```
 GET /api/crew/autocomplete?keyword={keyword}
 ```
@@ -181,14 +259,14 @@ Authorization: Bearer {accessToken}
   {
     "id": 2,
     "name": "아침 산책",
-    "intro": "산책하는 크루"
+    "intro": "산책하는 크루~"
   }
 ]
 ```
 
 ---
 
-### 3.3 크루 생성
+### 4.3 크루 생성
 ```
 POST /api/crew
 ```
@@ -227,7 +305,7 @@ Authorization: Bearer {accessToken}
 
 ---
 
-### 3.4 크루 가입
+### 4.4 크루 가입
 ```
 POST /api/crew/signup
 ```
@@ -253,7 +331,7 @@ Authorization: Bearer {accessToken}
 
 ---
 
-### 3.5 내 크루 홈 조회
+### 4.5 내 크루 홈 조회
 ```
 GET /api/crew
 ```
@@ -312,7 +390,7 @@ Authorization: Bearer {accessToken}
 
 ---
 
-### 3.6 크루원 달린 기록 조회
+### 4.6 크루원 달린 기록 조회
 ```
 GET /api/crew/{crewId}/members/stats
 ```
@@ -347,9 +425,9 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 4. 러닝 기록 API
+## 5. 러닝 기록 API
 
-### 4.1 러닝 기록 생성
+### 5.1 러닝 기록 생성
 ```
 POST /api/v1/runnings
 ```
@@ -398,9 +476,9 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 5. 챌린지 API
+## 6. 챌린지 API
 
-### 5.1 챌린지 생성
+### 6.1 챌린지 생성
 ```
 POST /api/v1/crews/{crewId}/challenges
 ```
@@ -446,7 +524,7 @@ Authorization: Bearer {accessToken}
 
 ---
 
-### 5.2 챌린지 목록 조회
+### 6.2 챌린지 목록 조회
 ```
 GET /api/v1/crews/{crewId}/challenges
 ```
@@ -494,9 +572,9 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 6. 배틀 리그 API
+## 7. 배틀 리그 API
 
-### 6.1 진행 중인 배틀 리그 조회
+### 7.1 진행 중인 배틀 리그 조회
 ```
 GET /api/v1/matches/ongoing
 ```
@@ -537,7 +615,7 @@ Authorization: Bearer {accessToken}
 
 ---
 
-### 6.2 진행 중인 배틀 리그 상세 조회
+### 7.2 진행 중인 배틀 리그 상세 조회
 ```
 GET /api/v1/matches/ongoing/detail
 ```
@@ -593,9 +671,9 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 7. 마이페이지 API
+## 8. 마이페이지 API
 
-### 7.1 마이페이지 요약 조회
+### 8.1 마이페이지 요약 조회
 ```
 GET /api/mypage
 ```
@@ -685,6 +763,10 @@ Authorization: Bearer {accessToken}
 ---
 
 ## 변경 이력
+
+### 2024-01-16
+- 홈 화면 API 추가 (배틀 리그 간략 정보, 오늘의 러닝 기록, 최근 크루 활동)
+- 배틀 리그 상세 조회 시 상대 크루원 정보 비공개 처리
 
 ### 2024-01-15
 - 챌린지 API 추가
