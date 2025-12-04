@@ -1,6 +1,7 @@
 package com.example.bakersbackend.domain.crew.repository;
 
 import com.example.bakersbackend.domain.crew.dto.CrewMemberRunningSatatsResponse;
+import com.example.bakersbackend.domain.crew.entity.Crew;
 import com.example.bakersbackend.domain.crew.entity.CrewMember;
 import com.example.bakersbackend.domain.crew.entity.MemberStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +48,14 @@ public interface CrewMemberRepository extends JpaRepository<CrewMember, Long> {
             @Param("monthStart") LocalDateTime monthStart,
             @Param("now") LocalDateTime now
     );
+
+    // 크루의 승인된 멤버 목록 (배틀 리그 기여도용)
+    @Query("""
+            SELECT cm
+            FROM CrewMember cm
+            JOIN FETCH cm.user u
+            WHERE cm.crew = :crew
+              AND cm.status = com.example.bakersbackend.domain.crew.entity.MemberStatus.APPROVED
+            """)
+    List<CrewMember> findApprovedMembersWithUser(@Param("crew") Crew crew);
 }

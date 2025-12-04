@@ -35,13 +35,11 @@ public class CrewChallenge extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "goal_distance", nullable = false)
-    private Integer goalDistance;
-
-    @Column(name = "type", nullable = true)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
     private ChallengeType type;
 
-    @Column(name = "goal_value")
+    @Column(name = "goal_value", nullable = false)
     private Integer goalValue;
 
     // 크루 전체가 달성한 누적 거리 (미터 단위)
@@ -68,7 +66,7 @@ public class CrewChallenge extends BaseEntity {
 
     // 비즈니스 메서드: 목표 달성 체크 후 성공 처리
     public boolean checkAndMarkSuccessIfGoalReached() {
-        if (this.currentAccumulatedDistance >= this.goalDistance && this.status == ChallengeStatus.ACTIVE) {
+        if (this.currentAccumulatedDistance >= this.goalValue && this.status == ChallengeStatus.ACTIVE) {
             this.status = ChallengeStatus.SUCCESS;
             return true;
         }
