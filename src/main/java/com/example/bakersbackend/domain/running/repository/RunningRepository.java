@@ -2,6 +2,8 @@ package com.example.bakersbackend.domain.running.repository;
 
 import com.example.bakersbackend.domain.auth.entity.User;
 import com.example.bakersbackend.domain.crew.dto.CrewTotalStatsData;
+import com.example.bakersbackend.domain.crew.entity.Crew;
+import com.example.bakersbackend.domain.running.dto.UserDistanceProjection;
 import com.example.bakersbackend.domain.running.entity.Running;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,4 +52,18 @@ public interface RunningRepository extends JpaRepository<Running, Long> {
             "from Running r " +
             "where r.user.id = :userId")
     Long countByUserId(@Param("userId") Long userId);
+
+    // 크루 기간별 유저별 거리 합계 (배틀 리그 개인 기여도용)
+    @Query("""
+            SELECT r.user.id as userId, SUM(r.distance) as totalDistance
+            FROM Running r
+            WHERE r.crew = :crew
+              AND r.startedAt BETWEEN :startAt AND :endAt
+            GROUP BY r.user.id
+            """)
+    List<UserDistanceProjection> sumDistanceByCrewAndPeriod(
+            @Param("crew") Crew crew,
+            @Param("startAt") LocalDateTime startAt,
+            @Param("endAt") LocalDateTime endAt
+    );
 }

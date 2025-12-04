@@ -26,7 +26,8 @@ public class SwaggerConfig {
                     .email("team-bakers@example.com"))
             )
             .servers(List.of(
-                new Server().url("http://localhost:8080").description("개발 서버")
+                new Server().url("http://localhost:8080").description("로컬 서버"),
+                new Server().url("https://13.124.218.49.nip.io").description("프로덕션 서버")
             ))
             .components(new Components()
                 .addSecuritySchemes("bearer-jwt",

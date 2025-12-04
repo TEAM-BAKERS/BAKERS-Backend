@@ -40,7 +40,7 @@ public class ChallengeController {
                 crew,
                 request.title(),
                 request.description(),
-                request.goalDistance(),
+                request.goalValue(),
                 request.endDate()
         );
 

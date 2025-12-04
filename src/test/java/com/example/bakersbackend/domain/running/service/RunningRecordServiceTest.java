@@ -131,7 +131,7 @@ class RunningRecordServiceTest {
                 .crew(testCrew)
                 .title("100km 완주 챌린지")
                 .description("크루 전체가 100km를 달려봅시다!")
-                .goalDistance(100_000) // 100km
+                .goalValue(100_000) // 100km
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
                 .startAt(LocalDateTime.of(2025, 1, 1, 0, 0))
@@ -180,7 +180,7 @@ class RunningRecordServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("동시성 테스트 챌린지")
-                .goalDistance(50_000) // 50km
+                .goalValue(50_000) // 50km
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
                 .startAt(LocalDateTime.of(2025, 1, 1, 0, 0))
@@ -257,7 +257,7 @@ class RunningRecordServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("10km 달성 챌린지")
-                .goalDistance(10_000) // 10km
+                .goalValue(10_000) // 10km
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
                 .startAt(LocalDateTime.of(2025, 1, 1, 0, 0))
@@ -352,7 +352,7 @@ class RunningRecordServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("누적 테스트 챌린지")
-                .goalDistance(20_000)
+                .goalValue(20_000)
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
                 .startAt(LocalDateTime.of(2025, 1, 1, 0, 0))
