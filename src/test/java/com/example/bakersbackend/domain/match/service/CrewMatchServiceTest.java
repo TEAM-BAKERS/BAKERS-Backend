@@ -484,6 +484,13 @@ class CrewMatchServiceTest {
         assertThat(response.opponentCrewDetail().crewId()).isEqualTo(testCrew2.getId());
         assertThat(response.opponentCrewDetail().crewName()).isEqualTo("크루B");
         assertThat(response.opponentCrewDetail().totalDistance()).isEqualTo(4000);
+
+        // 내 크루는 크루원 정보 포함
+        assertThat(response.myCrewDetail().memberContributions()).isNotEmpty();
+        assertThat(response.myCrewDetail().memberContributions()).hasSize(2);
+
+        // 상대 크루는 크루원 정보 비공개
+        assertThat(response.opponentCrewDetail().memberContributions()).isEmpty();
     }
 
     @Test

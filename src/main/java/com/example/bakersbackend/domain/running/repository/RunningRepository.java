@@ -66,4 +66,38 @@ public interface RunningRepository extends JpaRepository<Running, Long> {
             @Param("startAt") LocalDateTime startAt,
             @Param("endAt") LocalDateTime endAt
     );
+
+    // 오늘의 특정 사용자 러닝 기록 조회 (가장 최근 1개)
+    @Query("""
+            SELECT r
+            FROM Running r
+            WHERE r.user.id = :userId
+              AND r.startedAt BETWEEN :start AND :end
+            ORDER BY r.createdAt DESC
+            LIMIT 1
+            """)
+    Running findTodayRunningByUser(@Param("userId") Long userId,
+                                    @Param("start") LocalDateTime start,
+                                    @Param("end") LocalDateTime end);
+
+    // 오늘 하루 러닝 기록 합산 조회 (총 거리, 총 시간)
+    @Query("""
+            SELECT r
+            FROM Running r
+            WHERE r.user.id = :userId
+              AND r.startedAt BETWEEN :start AND :end
+            """)
+    List<Running> findTodayRunningsByUser(@Param("userId") Long userId,
+                                           @Param("start") LocalDateTime start,
+                                           @Param("end") LocalDateTime end);
+
+    // 크루의 최근 러닝 기록 조회 (최대 5개)
+    @Query("""
+            SELECT r
+            FROM Running r
+            WHERE r.crew.id = :crewId
+            ORDER BY r.startedAt DESC
+            LIMIT 5
+            """)
+    List<Running> findRecentRunningsByCrew(@Param("crewId") Long crewId);
 }
