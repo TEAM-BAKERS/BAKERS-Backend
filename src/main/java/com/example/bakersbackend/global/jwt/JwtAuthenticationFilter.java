@@ -48,6 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             boolean valid = jwtProvider.validateToken(token, JwtType.ACCESS);
             if (!valid) {
+                // TODO : 응답 지우기
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("text/plain;charset=UTF-8");
+                response.getWriter().write("JWT_ERROR: invalid token");
+
                 log.warn("토큰 검증 실패");
                 filterChain.doFilter(request, response);
                 return;
@@ -70,6 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.debug("인증 성공: userId={}, email={}", user.getId(), user.getEmail());
 
         } catch (JwtException | IllegalArgumentException e) {
+            // TODO : 응답 지우기
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().write("JWT_ERROR: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+
             log.error("JWT 인증 실패: {}", e.getMessage());
             SecurityContextHolder.clearContext();
         }
