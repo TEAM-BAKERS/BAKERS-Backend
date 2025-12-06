@@ -87,4 +87,11 @@ public class CrewChallenge extends BaseEntity {
     public boolean isWithinPeriod(LocalDateTime now) {
         return !now.isBefore(startAt) && !now.isAfter(endAt);
     }
+
+    // 비즈니스 메서드: 메타데이터 업데이트 (진행률은 유지)
+    public void updateMetadata(String title, String description, Integer goalValue) {
+        this.title = title;
+        this.description = description;
+        this.goalValue = goalValue;
+    }
 }
