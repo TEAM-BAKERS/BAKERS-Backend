@@ -28,10 +28,10 @@ POST /auth/signup
 }
 ```
 
-**Validation**
-- `email`: 필수, 이메일 형식
-- `password`: 필수, 6-100자
-- `nickname`: 필수, 2-20자
+**Request Fields**
+- `email` (string, required): 사용자 이메일 주소 (이메일 형식)
+- `password` (string, required): 비밀번호 (6-100자)
+- `nickname` (string, required): 사용자 닉네임 (2-20자)
 
 **Response** `201 Created`
 ```json
@@ -43,6 +43,13 @@ POST /auth/signup
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+**Response Fields**
+- `userId` (number, required): 생성된 사용자 ID
+- `email` (string, required): 사용자 이메일 주소
+- `nickname` (string, required): 사용자 닉네임
+- `accessToken` (string, required): JWT 액세스 토큰
+- `refreshToken` (string, required): JWT 리프레시 토큰
 
 ---
 
@@ -59,6 +66,10 @@ POST /auth/signin
 }
 ```
 
+**Request Fields**
+- `email` (string, required): 사용자 이메일 주소
+- `password` (string, required): 비밀번호
+
 **Response** `200 OK`
 ```json
 {
@@ -69,6 +80,13 @@ POST /auth/signin
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+**Response Fields**
+- `userId` (number, required): 사용자 ID
+- `email` (string, required): 사용자 이메일 주소
+- `nickname` (string, required): 사용자 닉네임
+- `accessToken` (string, required): JWT 액세스 토큰
+- `refreshToken` (string, required): JWT 리프레시 토큰
 
 ---
 
@@ -84,6 +102,9 @@ POST /auth/token/refresh
 }
 ```
 
+**Request Fields**
+- `refreshToken` (string, required): JWT 리프레시 토큰
+
 **Response** `200 OK`
 ```json
 {
@@ -94,6 +115,13 @@ POST /auth/token/refresh
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+**Response Fields**
+- `userId` (number, required): 사용자 ID
+- `email` (string, required): 사용자 이메일 주소
+- `nickname` (string, required): 사용자 닉네임
+- `accessToken` (string, required): 새로운 JWT 액세스 토큰
+- `refreshToken` (string, required): 새로운 JWT 리프레시 토큰
 
 ---
 
@@ -117,6 +145,11 @@ Authorization: Bearer {accessToken}
   "nickname": "홍길동"
 }
 ```
+
+**Response Fields**
+- `id` (number, required): 사용자 ID
+- `email` (string, required): 사용자 이메일 주소
+- `nickname` (string, required): 사용자 닉네임
 
 ---
 
@@ -181,6 +214,22 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Response Fields**
+- `battleLeague` (object, nullable): 진행 중인 배틀 리그 요약 정보 (없으면 null)
+  - `myCrewName` (string, required): 내 크루 이름
+  - `opponentCrewName` (string, required): 상대 크루 이름
+  - `myCrewDistance` (number, required): 내 크루 총 거리 (미터)
+  - `opponentCrewDistance` (number, required): 상대 크루 총 거리 (미터)
+- `todayRunning` (object, nullable): 오늘의 나의 러닝 기록 (없으면 null)
+  - `distance` (number, required): 거리 (미터)
+  - `duration` (number, required): 소요 시간 (초)
+  - `pace` (number, required): 페이스 (초/km)
+- `recentActivities` (array, required): 크루의 최근 활동 목록 (최대 5개)
+  - `nickname` (string, required): 크루원 닉네임
+  - `distance` (number, required): 거리 (미터)
+  - `duration` (number, required): 소요 시간 (초)
+  - `pace` (number, required): 페이스 (초/km)
+
 **데이터가 없는 경우** `200 OK`
 ```json
 {
@@ -233,6 +282,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Response Fields**
+- `crews` (array, required): 크루 목록
+  - `id` (number, required): 크루 ID
+  - `name` (string, required): 크루 이름
+  - `intro` (string, required): 크루 소개
+  - `memberCount` (number, required): 크루원 수
+  - `tags` (array, required): 크루 태그 목록
+    - `id` (number, required): 태그 ID
+    - `name` (string, required): 태그 이름
+
 ---
 
 ### 4.2 크루 검색 자동완성
@@ -246,7 +305,7 @@ Authorization: Bearer {accessToken}
 ```
 
 **Query Parameters**
-- `keyword`: 검색 키워드 (필수)
+- `keyword` (string, required): 검색 키워드
 
 **Response** `200 OK`
 ```json
@@ -263,6 +322,12 @@ Authorization: Bearer {accessToken}
   }
 ]
 ```
+
+**Response Fields**
+- `array` (array, required): 검색 결과 크루 목록
+  - `id` (number, required): 크루 ID
+  - `name` (string, required): 크루 이름
+  - `intro` (string, required): 크루 소개
 
 ---
 
@@ -291,8 +356,13 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-**Validation**
-- `name`: 필수
+**Request Fields**
+- `name` (string, required): 크루 이름
+- `intro` (string, optional): 크루 소개
+- `imgUrl` (string, optional): 크루 이미지 URL
+- `tags` (array, optional): 크루 태그 목록
+  - `id` (number, required): 태그 ID
+  - `name` (string, required): 태그 이름
 
 **Response** `200 OK`
 ```json
@@ -302,6 +372,11 @@ Authorization: Bearer {accessToken}
   "message": "크루가 생성되었습니다"
 }
 ```
+
+**Response Fields**
+- `crewId` (number, required): 생성된 크루 ID
+- `name` (string, required): 크루 이름
+- `message` (string, required): 응답 메시지
 
 ---
 
@@ -322,12 +397,18 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Request Fields**
+- `crewId` (number, required): 가입할 크루 ID
+
 **Response** `200 OK`
 ```json
 {
   "message": "크루에 가입되었습니다"
 }
 ```
+
+**Response Fields**
+- `message` (string, required): 응답 메시지
 
 ---
 
@@ -380,6 +461,34 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Response Fields (hasCrew=true)**
+- `hasCrew` (boolean, required): 크루 가입 여부
+- `crew` (object, nullable): 크루 정보 (가입하지 않은 경우 null)
+  - `id` (number, required): 크루 ID
+  - `name` (string, required): 크루 이름
+  - `intro` (string, required): 크루 소개
+  - `imgUrl` (string, required): 크루 이미지 URL
+  - `stats` (object, required): 크루 통계
+    - `totalDistance` (number, required): 총 거리 (미터)
+    - `totalDuration` (number, required): 총 시간 (초)
+    - `memberCount` (number, required): 크루원 수
+  - `teamChallenge` (object, nullable): 진행 중인 팀 챌린지 (없으면 null)
+    - `id` (number, required): 챌린지 ID
+    - `title` (string, required): 챌린지 제목
+    - `goalValue` (number, required): 목표 거리 (미터)
+    - `currentDistance` (number, required): 현재 거리 (미터)
+    - `progressPercentage` (number, required): 진행률 (%)
+    - `startAt` (string, required): 시작 시간
+    - `endAt` (string, required): 종료 시간
+  - `todayMembers` (array, required): 오늘 러닝한 크루원 목록
+    - `userId` (number, required): 사용자 ID
+    - `nickname` (string, required): 닉네임
+    - `imageUrl` (string, required): 프로필 이미지 URL
+    - `distance` (number, required): 거리 (미터)
+  - `info` (object, required): 크루 추가 정보
+    - `description` (string, required): 크루 상세 설명
+    - `rules` (string, required): 크루 규칙
+
 **크루가 없는 경우** `200 OK`
 ```json
 {
@@ -401,7 +510,7 @@ Authorization: Bearer {accessToken}
 ```
 
 **Path Parameters**
-- `crewId`: 크루 ID
+- `crewId` (number, required): 크루 ID
 
 **Response** `200 OK`
 ```json
@@ -422,6 +531,14 @@ Authorization: Bearer {accessToken}
   }
 ]
 ```
+
+**Response Fields**
+- `array` (array, required): 크루원 기록 목록
+  - `userId` (number, required): 사용자 ID
+  - `nickname` (string, required): 닉네임
+  - `imageUrl` (string, required): 프로필 이미지 URL
+  - `weekDistance` (number, required): 이번 주 거리 (미터)
+  - `monthDistance` (number, required): 이번 달 거리 (미터)
 
 ---
 
@@ -448,12 +565,12 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-**Validation**
-- `crewId`: 필수
-- `distance`: 필수, 최소 1m
-- `duration`: 필수, 최소 1초
-- `avgHeartrate`: 선택
-- `pace`: 선택 (초/km)
+**Request Fields**
+- `crewId` (number, required): 크루 ID
+- `distance` (number, required): 거리 (미터, 최소 1m)
+- `duration` (number, required): 소요 시간 (초, 최소 1초)
+- `avgHeartrate` (number, optional): 평균 심박수
+- `pace` (number, optional): 페이스 (초/km)
 
 **Response** `201 Created`
 ```json
@@ -469,6 +586,17 @@ Authorization: Bearer {accessToken}
   "createdAt": "2024-01-15T09:30:00"
 }
 ```
+
+**Response Fields**
+- `id` (number, required): 러닝 기록 ID
+- `userId` (number, required): 사용자 ID
+- `crewId` (number, required): 크루 ID
+- `distance` (number, required): 거리 (미터)
+- `duration` (number, required): 소요 시간 (초)
+- `avgHeartrate` (number, required): 평균 심박수
+- `pace` (number, required): 페이스 (초/km)
+- `startedAt` (string, required): 러닝 시작 시간
+- `createdAt` (string, required): 기록 생성 시간
 
 **후처리**
 - 크루 챌린지 진행률 자동 갱신
@@ -489,7 +617,7 @@ Authorization: Bearer {accessToken}
 ```
 
 **Path Parameters**
-- `crewId`: 크루 ID
+- `crewId` (number, required): 크루 ID
 
 **Request Body**
 ```json
@@ -501,11 +629,11 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-**Validation**
-- `title`: 필수
-- `goalValue`: 필수, 최소 1000
-- `endDate`: 필수, 미래 날짜
-- `description`: 선택
+**Request Fields**
+- `title` (string, required): 챌린지 제목
+- `description` (string, optional): 챌린지 설명
+- `goalValue` (number, required): 목표 거리 (미터, 최소 1000m)
+- `endDate` (string, required): 종료 날짜 (ISO 8601 형식, 미래 날짜)
 
 **Response** `201 Created`
 ```json
@@ -522,6 +650,17 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Response Fields**
+- `challengeId` (number, required): 챌린지 ID
+- `title` (string, required): 챌린지 제목
+- `description` (string, required): 챌린지 설명
+- `goalValue` (number, required): 목표 거리 (미터)
+- `currentAccumulatedDistance` (number, required): 현재 누적 거리 (미터)
+- `status` (string, required): 챌린지 상태 (ACTIVE, SUCCESS, FAILED)
+- `progressPercentage` (number, required): 진행률 (%)
+- `startAt` (string, required): 시작 시간
+- `endAt` (string, required): 종료 시간
+
 ---
 
 ### 6.2 챌린지 목록 조회
@@ -535,7 +674,7 @@ Authorization: Bearer {accessToken}
 ```
 
 **Path Parameters**
-- `crewId`: 크루 ID
+- `crewId` (number, required): 크루 ID
 
 **Response** `200 OK`
 ```json
@@ -564,6 +703,18 @@ Authorization: Bearer {accessToken}
   }
 ]
 ```
+
+**Response Fields**
+- `array` (array, required): 챌린지 목록
+  - `challengeId` (number, required): 챌린지 ID
+  - `title` (string, required): 챌린지 제목
+  - `description` (string, required): 챌린지 설명
+  - `goalValue` (number, required): 목표 거리 (미터)
+  - `currentAccumulatedDistance` (number, required): 현재 누적 거리 (미터)
+  - `status` (string, required): 챌린지 상태 (ACTIVE, SUCCESS, FAILED)
+  - `progressPercentage` (number, required): 진행률 (%)
+  - `startAt` (string, required): 시작 시간
+  - `endAt` (string, required): 종료 시간
 
 **챌린지 상태**
 - `ACTIVE`: 진행 중
@@ -610,6 +761,19 @@ Authorization: Bearer {accessToken}
   ]
 }
 ```
+
+**Response Fields**
+- `match` (object, required): 배틀 리그 정보
+  - `matchId` (number, required): 매치 ID
+  - `title` (string, required): 매치 제목
+  - `description` (string, required): 매치 설명
+  - `startAt` (string, required): 시작 시간
+  - `endAt` (string, required): 종료 시간
+- `leaderboard` (array, required): 순위표
+  - `rank` (number, required): 순위
+  - `crewId` (number, required): 크루 ID
+  - `crewName` (string, required): 크루 이름
+  - `totalDistance` (number, required): 총 거리 (미터)
 
 **진행 중인 매치가 없는 경우** `204 No Content`
 
@@ -663,11 +827,29 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-**진행 중인 매치가 없거나 내 크루가 참가하지 않은 경우** `204 No Content`
+**Response Fields**
+- `match` (object, required): 배틀 리그 정보
+  - `matchId` (number, required): 매치 ID
+  - `title` (string, required): 매치 제목
+  - `description` (string, required): 매치 설명
+  - `startAt` (string, required): 시작 시간
+  - `endAt` (string, required): 종료 시간
+- `myCrewDetail` (object, required): 내 크루 상세 정보
+  - `crewId` (number, required): 크루 ID
+  - `crewName` (string, required): 크루 이름
+  - `totalDistance` (number, required): 총 거리 (미터)
+  - `memberContributions` (array, required): 크루원별 기여도
+    - `userId` (number, required): 사용자 ID
+    - `nickname` (string, required): 닉네임
+    - `distance` (number, required): 거리 (미터)
+    - `rank` (number, required): 크루 내 순위
+- `opponentCrewDetail` (object, required): 상대 크루 정보
+  - `crewId` (number, required): 크루 ID
+  - `crewName` (string, required): 크루 이름
+  - `totalDistance` (number, required): 총 거리 (미터)
+  - `memberContributions` (array, required): 빈 배열 (상대 크루원 정보 비공개)
 
-**참고**
-- `myCrewDetail`: 내 크루의 상세 정보 (크루원별 기여도 포함)
-- `opponentCrewDetail`: 상대 크루의 요약 정보 (총 거리만 포함, 크루원 정보 제외)
+**진행 중인 매치가 없거나 내 크루가 참가하지 않은 경우** `204 No Content`
 
 ---
 
@@ -694,6 +876,14 @@ Authorization: Bearer {accessToken}
   "averagePace": "7'30\""
 }
 ```
+
+**Response Fields**
+- `nickname` (string, required): 사용자 닉네임
+- `imageUrl` (string, required): 프로필 이미지 URL
+- `joinDate` (string, required): 가입 날짜 (yyyy.MM.dd 형식)
+- `totalDistanceKm` (number, required): 총 거리 (킬로미터)
+- `runningCount` (number, required): 총 러닝 횟수
+- `averagePace` (string, required): 평균 페이스 (예: "7'30\"")
 
 ---
 

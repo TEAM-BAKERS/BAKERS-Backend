@@ -100,4 +100,7 @@ public interface RunningRepository extends JpaRepository<Running, Long> {
             LIMIT 5
             """)
     List<Running> findRecentRunningsByCrew(@Param("crewId") Long crewId);
+
+    // 특정 사용자의 기간별 러닝 기록 조회 (개인 챌린지 진행률 계산용)
+    List<Running> findByUserAndStartedAtBetween(User user, LocalDateTime start, LocalDateTime end);
 }
