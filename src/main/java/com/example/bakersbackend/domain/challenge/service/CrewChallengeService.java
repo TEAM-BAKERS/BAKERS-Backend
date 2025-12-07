@@ -134,4 +134,40 @@ public class CrewChallengeService {
     public List<CrewChallenge> getAllChallenges(Crew crew) {
         return crewChallengeRepository.findByCrewOrderByCreatedAtDesc(crew);
     }
+
+    /**
+     * 사용자가 속한 크루의 활성 챌린지를 조회합니다.
+     */
+    @Transactional(readOnly = true)
+    public List<CrewChallenge> getUserCrewActiveChallenges(User user) {
+        return crewChallengeRepository.findByUserIdAndStatus(user.getId(), ChallengeStatus.ACTIVE);
+    }
+
+    /**
+     * 만료된 챌린지를 FAILED로 일괄 처리합니다.
+     * - 스케줄러에서 호출됩니다.
+     * - endAt이 지났는데 목표를 달성하지 못한 챌린지를 FAILED로 변경합니다.
+     */
+    @Transactional
+    public int markExpiredChallengesAsFailed() {
+        LocalDateTime now = LocalDateTime.now(clock);
+        List<CrewChallenge> expiredChallenges = crewChallengeRepository.findExpiredActiveChallenges(now);
+
+        int failedCount = 0;
+        for (CrewChallenge challenge : expiredChallenges) {
+            challenge.markAsFailed();
+            failedCount++;
+            log.info("챌린지 실패 처리: crewId={}, challengeId={}, title='{}', 달성률={}%",
+                    challenge.getCrew().getId(),
+                    challenge.getId(),
+                    challenge.getTitle(),
+                    (int) ((double) challenge.getCurrentAccumulatedDistance() / challenge.getGoalValue() * 100));
+        }
+
+        if (failedCount > 0) {
+            log.info("총 {}개의 만료된 챌린지를 FAILED로 처리했습니다.", failedCount);
+        }
+
+        return failedCount;
+    }
 }

@@ -58,7 +58,7 @@ class CrewChallengeServiceTest {
                 .build());
 
         testCrew = crewRepository.save(Crew.builder()
-                .name("테스트 크루")
+                .name("크루A")
                 .owner(testUser)
                 .build());
     }
@@ -84,6 +84,8 @@ class CrewChallengeServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("테스트 챌린지")
+                .description("테스트용 챌린지")
+                .type(com.example.bakersbackend.domain.challenge.entity.ChallengeType.DISTANCE)
                 .goalValue(100_000)
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
@@ -111,6 +113,8 @@ class CrewChallengeServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("누적 테스트")
+                .description("테스트용 챌린지")
+                .type(com.example.bakersbackend.domain.challenge.entity.ChallengeType.DISTANCE)
                 .goalValue(50_000)
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
@@ -140,6 +144,8 @@ class CrewChallengeServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("10km 달성")
+                .description("테스트용 챌린지")
+                .type(com.example.bakersbackend.domain.challenge.entity.ChallengeType.DISTANCE)
                 .goalValue(10_000)
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
@@ -164,6 +170,8 @@ class CrewChallengeServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("10km 달성")
+                .description("테스트용 챌린지")
+                .type(com.example.bakersbackend.domain.challenge.entity.ChallengeType.DISTANCE)
                 .goalValue(10_000)
                 .currentAccumulatedDistance(8000) // 이미 8km 달성
                 .status(ChallengeStatus.ACTIVE)
@@ -206,6 +214,8 @@ class CrewChallengeServiceTest {
         CrewChallenge challenge = crewChallengeRepository.save(CrewChallenge.builder()
                 .crew(testCrew)
                 .title("다중 유저 테스트")
+                .description("테스트용 챌린지")
+                .type(com.example.bakersbackend.domain.challenge.entity.ChallengeType.DISTANCE)
                 .goalValue(30_000)
                 .currentAccumulatedDistance(0)
                 .status(ChallengeStatus.ACTIVE)
