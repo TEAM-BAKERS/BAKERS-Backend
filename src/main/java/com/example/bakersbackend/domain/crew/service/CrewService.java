@@ -210,6 +210,7 @@ public class CrewService {
                 .role(MemberRole.LEADER)
                 .build();
 
+        user.setCurrentGroupId(crew.getId());
         crewMemberRepository.save(crewMember);
 
         // 5. 응답 데이터 구성
