@@ -37,7 +37,8 @@ public class SecurityConfig {
         // 프론트 도메인들만 명시적으로 허용
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
-                "https://bakers-frontend-git-dev-yujin-ohs-projects.vercel.app"
+                "https://bakers-frontend-git-dev-yujin-ohs-projects.vercel.app",
+            "https://bakers-frontend-phi.vercel.app/login"
         ));
         // 허용 HTTP 메서드
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
